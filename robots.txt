@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://iseeya.netlify.app/sitemap.xml
