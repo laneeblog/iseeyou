@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_try.css">
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5ff7c6f141874d06"></script>
+</head>
+
+<body>
+
+
+    <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="script.js"></script>
+
+    <div class="file-upload">
+        <!-- <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add
+            Image</button> -->
+
+        <br>
+        <br><br><br>
+        <div class="effect">
+            <div id="word">
+                <div id="glitches">
+                    <span id="main"  style="font-size: 20px;">너도 모르는</span>
+                    <div id="letters"  style="font-size: 20px;">
+                        <span class="letter">너</span>
+                        <span class="letter">도</span>
+                        <span class="letter"> </span>
+                        <span class="letter">모</span>
+                        <span class="letter">르</span>
+                        <span class="letter">는</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="effect">
+            <div id="word">
+                <div id="glitches">
+                    <span id="main"  style="font-size: 30px;">네 마음을 알려줄게</span>
+                    <div id="letters"  style="font-size: 30px;">
+                        <span class="letter">네</span>
+                        <span class="letter"> </span>
+                        <span class="letter">마</span>
+                        <span class="letter">음</span>
+                        <span class="letter">을</span>
+                        <span class="letter"></span>
+                        <span class="letter">알</span>
+                        <span class="letter">려</span>
+                        <span class="letter">줄</span>
+                        <span class="letter">게</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+        
+        <!-- <div class="title">
+            <h2>너도 모르는</h2>
+            <h1>네 마음을 알려줄게</h1>
+        </div> -->
+
+        <div class="image-upload-wrap">
+            <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+            <div class="drag-text">
+                <h3>네 표정을 올려봐</h3>
+            </div>
+        </div>
+        <div class="file-upload-content">
+            <img class="file-upload-image" id="faceImage" src="#" alt="your image" />
+            <!-- <div class="image-title-wrap"></div> -->
+        </div>
+
+        <div id="label-container" class="label-container"></div>
+
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+        <div class="addthis_inline_share_toolbox"></div>
+
+    </div>
+    
+    <br><br><br><br><br><br><br><br><br><br>
+    <div id="webcam-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <script type="text/javascript">
+        // More API functions here:
+        // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+        // the link to your model provided by Teachable Machine export panel
+        //const URL = "https://teachablemachine.withgoogle.com/models/R96skMHPb/";
+        const URL = "https://teachablemachine.withgoogle.com/models/ArwDzYeXv/";
+
+        let model, webcam, labelContainer, maxPredictions;
+
+        // Load the image model and setup the webcam
+        async function init() {
+            var labelContainer = document.getElementById("label-container");
+            //labelContainer.innerHTML = "<img src='//miro.medium.com/max/882/1*9EBHIOzhE1XfMYoKz1JcsQ.gif'>";
+            labelContainer.innerHTML = `네 마음을 들여다 보는 중
+                                        <div class="center">                                            
+                                            <span class="a">
+                                                <span class="b">
+                                                    <span class="c"></span>
+                                                </span>
+                                            </span>
+                                        </div>`;
+
+                                        
+            //window.scrollTo( 0, 1000 );
+            document.getElementById('label-container').scrollIntoView();
+
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            // load the model and metadata
+            // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+            // or files from your local hard drive
+            // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+
+            //labelContainer = document.getElementById("label-container");
+            // for (let i = 0; i < maxPredictions; i++) { // and class labels
+            //     labelContainer.appendChild(document.createElement("div"));
+            // }
+
+
+        }
+
+        // run the webcam image through the image model
+        async function predict() {
+            // predict can take in an image, video or canvas html element
+            var image = document.getElementById('faceImage');
+            const prediction = await model.predict(image, false);
+
+            prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+
+            var maxFeeling = prediction[0].className;
+            var labelContainer = document.getElementById("label-container");
+            var result = "";
+
+            switch (maxFeeling) {
+                case "animal":  // 동물
+                    result1 = "동물은 저리 가렴";
+                    break;
+                case "annoy":   // 짜증, 노려보기
+                    var arr = [];
+                    arr[0] = "지금 나 건드리면 X되는 거다";
+                    arr[1] = "아무나 붙잡고 소리지르고 싶다";
+                    arr[2] = "뭔가 언짢아";
+                    arr[3] = "나는 지금 다 마음에 안 든다";
+                    arr[4] = "왜 내 뜻대로 되는 게 하나도 없을까";
+                    var idx = Math.floor(Math.random() * 5);
+                    result1 = arr[idx];
+                    break;
+                case "fatal":   // 윙크, 섹시한 사진
+                    var arr = [];
+                    arr[0] = "사실 나는 내가 예쁘다고 생각해";
+                    arr[1] = "나는 다 꼬실 수 있다";
+                    arr[2] = "아무나 유혹하고 싶다";
+                    arr[3] = "라면 먹고 갈래?";
+                    var idx = Math.floor(Math.random() * 4);
+                    result1 = arr[idx];
+                    break;
+                case "happy":   // 활짝 웃거나 미소 짓는 사진
+                    var arr = [];
+                    arr[0] = "행복해서 웃는 거 아니죠, 웃어서 행복한 거죠";
+                    arr[1] = "오늘의 눈물이 내일의 웃음이 될 거야";
+                    arr[2] = "행복은 먼 곳에 있지 않았다";
+                    var idx = Math.floor(Math.random() * 3);
+                    result1 = arr[idx];
+                    break;           
+                case "mebest":  // 폼 잡는 전신 사진
+                    var arr = [];
+                    arr[0] = "사랑한다 너, 아니 나";
+                    arr[1] = "생각해보면 내가 제일 나아";
+                    arr[2] = "나는 다 할 수 있어";
+                    var idx = Math.floor(Math.random() * 3);
+                    result1 = arr[idx];
+                    break;     
+                case "more":    // 단체샷
+                    var arr = [];
+                    arr[0] = "역시 떼거지로 다니는 게 좋아!";
+                    arr[1] = "여기서 내가 제일 낫다";
+                    arr[2] = "내가 왜 여기 와가지고...";
+                    arr[3] = "혼자 있고 싶다";
+                    var idx = Math.floor(Math.random() * 4);
+                    result1 = arr[idx];
+                    break;
+                case "nohuman": // 사람 아닌 사진
+                    result1 = "사람이 아니고 싶구나";
+                    break;
+                case "nono":    // 무표정
+                    var arr = [];
+                    arr[0] = "나는 아무 생각이 없다";
+                    arr[1] = "나 좀 내버려 둬";
+                    arr[2] = "집에 가고 싶다";
+                    var idx = Math.floor(Math.random() * 3);
+                    result1 = arr[idx];
+                    break;
+                case "sad":     // 눈물, 통곡하는 사진
+                    var arr = [];
+                    arr[0] = "마음이가 아파";
+                    arr[1] = "아 ㅅㅂ 다 X같아";
+                    arr[2] = "아 몰라 몰라 ㅅㅂ";
+                    arr[3] = "인생 참 피곤하쥬?";
+                    var idx = Math.floor(Math.random() * 4);
+                    result1 = arr[idx];
+                    break;
+                case "stare":     // 정면
+                    var arr = [];
+                    arr[0] = "눈이 부시네";
+                    arr[1] = "뚫어지겠다";
+                    var idx = Math.floor(Math.random() * 2);
+                    result1 = arr[idx];
+                    break;
+                case "two":     // 눈물, 통곡하는 사진
+                    var arr = [];
+                    arr[0] = "영원한 사랑을 약속하고 싶구나";
+                    arr[1] = "적과의 동침";
+                    var idx = Math.floor(Math.random() * 2);
+                    result1 = arr[idx];
+                    break;
+                //-----------------------------------------
+                // case "annoy1":
+                //     result1 = "하아 빡치네";
+                //     result2 = "";
+                //     break;                
+                // case "dumb":
+                //     result1 = "정신이 나갔구나. 약 먹을 시간이야";
+                //     result2 = "";
+                //     break;                
+                // case "happy1":
+                //     result1 = "눈 속을 뛰어다니는 강아지처럼 행복하다";
+                //     result2 = "";
+                //     break;                                               
+                
+            }
+
+            //labelContainer.innerHTML = `<div class="result">${result}</div><button type="button" onclick="removeUpload()" class="remove-image">다시 해보렴</button>`;
+            labelContainer.innerHTML = `<div class="result"><div class="result1">${result1}</div><div onclick="window.location.reload()" class="remove-image">다른 사진으로</div>`;
+
+            // for (let i = 0; i < maxPredictions; i++) {
+            //     const classPrediction =
+            //         prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            //     labelContainer.childNodes[i].innerHTML = classPrediction;
+            // }
+        }
+
+
+    </script>
+
+       
+
+</body>
+
+</html>
+
+<!-- 
+Copyright (c) 2021 by Aaron Vanston (https://codepen.io/aaronvanston/pen/yNYOXR)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+//
+Image by <a href="https://pixabay.com/users/susan-lu4esm-7009216/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4573176">Susan Cipriano</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4573176">Pixabay</a>
+ -->
