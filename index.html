@@ -18,6 +18,7 @@
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5ff7c6f141874d06"></script>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="icon" href="favicon.ico">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -35,8 +36,8 @@
         <div class="effect">
             <div id="word">
                 <div id="glitches">
-                    <span id="main"  style="font-size: 20px;">너도 모르는</span>
-                    <div id="letters"  style="font-size: 20px;">
+                    <span id="main" class="mainLetter" style="font-size: 20px;">너도 모르는</span>
+                    <div id="letters" style="font-size: 20px;">
                         <span class="letter">너</span>
                         <span class="letter">도</span>
                         <span class="letter"> </span>
@@ -50,8 +51,8 @@
         <div class="effect">
             <div id="word">
                 <div id="glitches">
-                    <span id="main"  style="font-size: 30px;">네 마음을 알려줄게</span>
-                    <div id="letters"  style="font-size: 30px;">
+                    <span id="main" class="mainLetter" style="font-size: 30px;">네 마음을 알려줄게</span>
+                    <div id="letters" style="font-size: 30px;">
                         <span class="letter">네</span>
                         <span class="letter"> </span>
                         <span class="letter">마</span>
@@ -68,7 +69,7 @@
         </div>
 
         <br><br>
-        
+
         <!-- <div class="title">
             <h2>너도 모르는</h2>
             <h1>네 마음을 알려줄게</h1>
@@ -78,7 +79,8 @@
             <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
             <div class="drag-text">
                 <h3>네 사진을 올려봐<br>
-                    <span style="font-size: 12px; font-weight: lighter; line-height: 50%;">아 참고로 사진 저장은 안 한단다<br> 다 돈이거든</span>
+                    <span style="font-size: 12px; font-weight: lighter; line-height: 50%;">참고로 사진 저장은 안 함<br> 다
+                        돈이거든</span>
                 </h3>
             </div>
         </div>
@@ -92,49 +94,63 @@
         <!-- Go to www.addthis.com/dashboard to customize your tools -->
         <div class="addthis_inline_share_toolbox"></div>
 
-        
+        <!-- <button id="tocapture">결과 캡처</button> -->
+
 
     </div>
 
+    <div id="canvas" style="display: none;"></div>
 
-    <div style="width: 100%; max-width: 500px; margin: auto; text-align: center;"> 
-        <ins class="kakao_ad_area" style="display:none;" 
-        data-ad-unit    = "DAN-B85hU6tUnW5X5vPo" 
-        data-ad-width   = "320" 
-        data-ad-height  = "100"></ins> 
+    <div class="adBlock" style="width: 100%; max-width: 500px; margin: auto; text-align: center;">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-B85hU6tUnW5X5vPo" data-ad-width="320"
+            data-ad-height="100"></ins>
+        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-8N5uVnTOlw3oHflI" data-ad-width="300"
+            data-ad-height="250"></ins>
+        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-GVqRucKpSpi6nHfX" data-ad-width="250"
+            data-ad-height="250"></ins>
         <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
     </div>
 
-    <div style="width: 100%; max-width: 500px; margin: auto; text-align: center;"> 
-        <ins class="kakao_ad_area" style="display:none;" 
-        data-ad-unit    = "DAN-tjvxeZ9F2OU74kiH" 
-        data-ad-width   = "320" 
-        data-ad-height  = "100"></ins> 
-        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-    </div>
-
-
-    <div style="width: 100%; max-width: 500px; margin: auto; text-align: center;">
-        <ins class="kakao_ad_area" style="display:none;" 
-        data-ad-unit    = "DAN-8N5uVnTOlw3oHflI" 
-        data-ad-width   = "300" 
-        data-ad-height  = "250"></ins> 
-        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-    </div>
-
-    <!-- <div style="width: 100%; max-width: 500px; margin: auto; text-align: center;">
-        <ins class="kakao_ad_area" style="display:none;" 
-        data-ad-unit    = "DAN-GVqRucKpSpi6nHfX" 
-        data-ad-width   = "250" 
-        data-ad-height  = "250"></ins> 
-        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-    </div> -->
-    
     <div id="webcam-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
     <script type="text/javascript">
+    
+        $(document).on('click', '#tocapture', function () {      
+            $('.letter').each(function (idx, el) {
+                $(el).css("display", "none");
+            });      
+            $('.mainLetter').each(function (idx, el) {
+                $(el).css("animation", "none");
+            });              
+            $('.addthis_inline_share_toolbox').css("display", "none");
+            $('.adBlock').css("display", "none");
+
+            html2canvas($('body').get(0)).then(function (canvas) {
+                saveAs(canvas.toDataURL(), 'file-name.jpg');                    
+            });
+
+            $('.addthis_inline_share_toolbox').css("display", "block");
+            $('.adBlock').css("display", "block");
+        });
+        function saveAs(uri, filename) {
+            var link = document.createElement('a');
+            if (typeof link.download === 'string') {
+                link.href = uri;
+                link.download = filename;
+                document.body.appendChild(link); link.click();
+                document.body.removeChild(link);
+            } else {
+                window.open(uri);
+            }
+        }
+
+
         // More API functions here:
         // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
@@ -157,8 +173,8 @@
                                             </span>
                                         </div>`;
 
-                                        
-            window.scrollTo( 0, 400 );
+
+            window.scrollTo(0, 400);
             //document.getElementById('label-container').scrollIntoView();
 
             const modelURL = URL + "model.json";
@@ -193,10 +209,10 @@
             var result = "";
 
             switch (maxFeeling) {
-                case "animal":  // 동물
+                case "animal":  
                     result1 = "동물은 저리 가렴";
                     break;
-                case "annoy":   // 짜증, 노려보기
+                case "annoy":   
                     var arr = [];
                     // arr[0] = "지금 나 건드리면 X되는 거다";
                     // arr[1] = "아무나 붙잡고 소리지르고 싶다";
@@ -208,7 +224,7 @@
                     var idx = Math.floor(Math.random() * 3);
                     result1 = arr[idx];
                     break;
-                case "fatal":   // 윙크, 섹시한 사진
+                case "fatal":   
                     var arr = [];
                     arr[0] = "사실 나는 내가 예쁘다고 생각해";
                     arr[1] = "나는 다 꼬실 수 있다";
@@ -217,23 +233,23 @@
                     var idx = Math.floor(Math.random() * 4);
                     result1 = arr[idx];
                     break;
-                case "happy":   // 활짝 웃거나 미소 짓는 사진
+                case "happy":   
                     var arr = [];
                     arr[0] = "행복해서 웃는 거 아니죠, 웃어서 행복한 거죠";
                     arr[1] = "오늘의 눈물이 내일의 웃음이 될 거야";
                     arr[2] = "행복은 먼 곳에 있지 않았다";
                     var idx = Math.floor(Math.random() * 3);
                     result1 = arr[idx];
-                    break;           
-                case "mebest":  // 폼 잡는 전신 사진
+                    break;
+                case "mebest":  
                     var arr = [];
-                    arr[0] = "사랑한다 너, 아니 나";
-                    arr[1] = "생각해보면 내가 제일 나아";
-                    arr[2] = "나는 다 할 수 있어";
-                    var idx = Math.floor(Math.random() * 3);
+                    //arr[0] = "사랑한다 너, 아니 나";
+                    arr[0] = "생각해보면 내가 제일 나아";
+                    //arr[2] = "나는 다 할 수 있어";
+                    var idx = Math.floor(Math.random() * 1);
                     result1 = arr[idx];
-                    break;     
-                case "more":    // 단체샷
+                    break;
+                case "more":   
                     var arr = [];
                     arr[0] = "역시 떼거지로 다니는 게 좋아!";
                     arr[1] = "여기서 내가 제일 낫다";
@@ -242,10 +258,10 @@
                     var idx = Math.floor(Math.random() * 4);
                     result1 = arr[idx];
                     break;
-                case "nohuman": // 사람 아닌 사진
+                case "nohuman": 
                     result1 = "사람이 아니고 싶구나";
                     break;
-                case "nono":    // 무표정
+                case "nono":    
                     var arr = [];
                     arr[0] = "나는 아무 생각이 없다";
                     arr[1] = "나 좀 내버려 둬";
@@ -253,7 +269,7 @@
                     var idx = Math.floor(Math.random() * 3);
                     result1 = arr[idx];
                     break;
-                case "sad":     // 눈물, 통곡하는 사진
+                case "sad":     
                     var arr = [];
                     arr[0] = "마음이가 아파";
                     //arr[1] = "아 ㅅㅂ 다 X같아";
@@ -262,14 +278,14 @@
                     var idx = Math.floor(Math.random() * 2);
                     result1 = arr[idx];
                     break;
-                case "stare":     // 정면
+                case "stare":    
                     var arr = [];
                     arr[0] = "눈이 부시네";
                     arr[1] = "뚫어지겠다";
                     var idx = Math.floor(Math.random() * 2);
                     result1 = arr[idx];
                     break;
-                case "two":     
+                case "two":
                     var arr = [];
                     arr[0] = "영원한 사랑을 약속하고 싶구나";
                     arr[1] = "적과의 동침";
@@ -289,11 +305,11 @@
                 //     result1 = "눈 속을 뛰어다니는 강아지처럼 행복하다";
                 //     result2 = "";
                 //     break;                                               
-                
+
             }
 
             //labelContainer.innerHTML = `<div class="result">${result}</div><button type="button" onclick="removeUpload()" class="remove-image">다시 해보렴</button>`;
-            labelContainer.innerHTML = `<div class="result"><div class="result1">${result1}</div><div onclick="window.location.reload()" class="remove-image">다른 사진으로</div>`;
+            labelContainer.innerHTML = `<div class="result"><div class="result1">${result1}</div><div onclick="window.location.reload()" class="remove-image">다른 사진으로</div><div id="tocapture" class="tocapture">결과 캡처하기</div>`;
 
             // for (let i = 0; i < maxPredictions; i++) {
             //     const classPrediction =
@@ -305,15 +321,15 @@
 
     </script>
 
-       
+
 
     <script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
     <script type="text/javascript">
-    if(!wcs_add) var wcs_add = {};
-    wcs_add["wa"] = "12dfad19bc2faf";
-    if(window.wcs) {
-    wcs_do();
-    }
+        if (!wcs_add) var wcs_add = {};
+        wcs_add["wa"] = "12dfad19bc2faf";
+        if (window.wcs) {
+            wcs_do();
+        }
     </script>
 
 </body>
