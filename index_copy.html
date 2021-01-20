@@ -156,13 +156,15 @@
             });      
             $('.mainLetter').each(function (idx, el) {
                 $(el).css("animation", "none");
-            });  
+            });              
+            $('.addthis_inline_share_toolbox').css("display", "none");
             $('.adBlock').css("display", "none");
 
             html2canvas($('body').get(0)).then(function (canvas) {
                 saveAs(canvas.toDataURL(), 'file-name.jpg');                    
             });
 
+            $('.addthis_inline_share_toolbox').css("display", "block");
             $('.adBlock').css("display", "block");
         });
         function saveAs(uri, filename) {
@@ -201,7 +203,7 @@
                                         </div>`;
 
 
-            window.scrollTo(0, 300);
+            window.scrollTo(0, 400);
             //document.getElementById('label-container').scrollIntoView();
 
             const modelURL = URL + "model.json";
